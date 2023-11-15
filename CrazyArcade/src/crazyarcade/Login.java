@@ -22,6 +22,17 @@ public class Login extends JFrame {
         };
 
         scrollPane = new JScrollPane(background);
+       
+        background.setLayout(null);
+        
+        JButton loginButton = new JButton("시작하기");
+        loginButton.setFocusPainted(false);
+        loginButton.setFont(new Font("굴림", Font.BOLD, 20));
+        loginButton.setForeground(new Color(255, 255, 255));
+        loginButton.setBackground(new Color(0, 0, 255));
+        loginButton.setSize(320, 60);
+        loginButton.setLocation(280, 510);
+        background.add(loginButton);
         setContentPane(scrollPane); 
     }
 
