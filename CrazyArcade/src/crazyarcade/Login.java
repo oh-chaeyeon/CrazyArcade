@@ -27,6 +27,15 @@ public class Login extends JFrame {
         background.setLayout(null);
         
         JButton loginButton = new JButton("시작하기");
+        
+        loginButton.addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		new Waitroom();
+        		setVisible(false);
+        	}
+        });
+        
         loginButton.setFocusPainted(false);
         loginButton.setFont(new Font("굴림", Font.BOLD, 20));
         loginButton.setForeground(new Color(255, 255, 255));
