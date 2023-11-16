@@ -9,8 +9,9 @@ public class Login extends JFrame {
     ImageIcon icon;
 
     public Login() {
-        icon = new ImageIcon("C:/Users/user/git/CrazyArcade/CrazyArcade/src/CrazyArcade/image/login.jpg");
-
+        icon = new ImageIcon("C:\\Users\\joie0\\git\\CrazyArcade\\CrazyArcade\\CrazyArcade\\src\\crazyarcade\\image\\login.jpg");
+        //icon = new ImageIcon("C:/Users/user/git/CrazyArcade/CrazyArcade/src/CrazyArcade/image/login.jpg");
+        
         JPanel background = new JPanel() {
             @Override
             public void paintComponent(Graphics g) {
