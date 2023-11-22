@@ -1,55 +1,52 @@
 package crazyarcade;
 
-import java.awt.event.*;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Login extends JFrame {
-   JScrollPane scrollPane;
-    ImageIcon icon;
+    public Login(String title, Runnable onStartChat) {
+        setTitle(title);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-    public Login() {
-        icon = new ImageIcon("./image/login.jpg");
-        
-        JPanel background = new JPanel() {
+        ImageIcon backgroundIcon = new ImageIcon(getClass().getResource("/image/login.jpg"));
+        Image image = backgroundIcon.getImage().getScaledInstance(750, 550, Image.SCALE_SMOOTH);
+        ImageIcon scaledIcon = new ImageIcon(image);
+
+        JButton startButton = new JButton("시작하기");
+        startButton.addActionListener(new ActionListener() {
             @Override
-            public void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                if (icon != null) {
-                    g.drawImage(icon.getImage(), 0, 0, this.getWidth(), this.getHeight(), this);
-                }
+            public void actionPerformed(ActionEvent e) {
+                setVisible(false);
+                onStartChat.run();
             }
-        };
-
-        scrollPane = new JScrollPane(background);
-       
-        background.setLayout(null);
-        
-        JButton loginButton = new JButton("시작하기");
-        
-        loginButton.addActionListener(new ActionListener() {
-        	@Override
-        	public void actionPerformed(ActionEvent e) {
-        		new Waitroom();
-        		setVisible(false);
-        	}
         });
         
-        loginButton.setFocusPainted(false);
-        loginButton.setFont(new Font("굴림", Font.BOLD, 20));
-        loginButton.setForeground(new Color(255, 255, 255));
-        loginButton.setBackground(new Color(0, 0, 255));
-        loginButton.setSize(320, 60);
-        loginButton.setLocation(280, 510);
-        background.add(loginButton);
-        setContentPane(scrollPane); 
+        startButton.setFont(new Font("굴림", Font.BOLD, 20));
+        startButton.setFocusPainted(false);
+
+        JLabel backgroundLabel = new JLabel(scaledIcon);
+
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(startButton, BorderLayout.SOUTH);
+        panel.add(backgroundLabel, BorderLayout.CENTER);
+
+        setContentPane(panel);
+
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
     public static void main(String[] args) {
-       Login frame=new Login();
-       frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setTitle("CrazyArcade");
-        frame.setSize(900, 650);
-       frame.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            Login frame = new Login("Login", () -> {
+                System.out.println("게임에 접속합니다..");
+                SwingUtilities.invokeLater(() -> new Waitroom("대기실"));
+            });
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setVisible(true);
+        });
     }
 }
