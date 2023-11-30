@@ -27,6 +27,9 @@ public class Client {
 
         waitroom = new Waitroom("대기실 (User2)");
         waitroom.setLocation(location);
+        waitroom.displayImage("/image/bazzi_front.png");
+        waitroom.displayClientImage("/image/woonie_front.png");
+        
         waitroom.getSendButton().addActionListener(e -> sendMessage());
         startClient();
     }
