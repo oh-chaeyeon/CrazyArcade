@@ -23,6 +23,8 @@ public class Server {
 
         waitroom = new Waitroom("대기실 (User1)");
         waitroom.setLocation(location);
+        waitroom.displayImage("/image/bazzi_front.png");
+
         waitroom.getSendButton().addActionListener(e -> sendMessage());
         startServer();
     }
@@ -37,6 +39,7 @@ public class Server {
                 Socket clientSocket = serverSocket.accept();
                 SwingUtilities.invokeLater(() ->
                     waitroom.appendText("User2가 입장하셨습니다.\n\n"));
+                	waitroom.displayClientImage("/image/woonie_front.png");
 
                 out = new PrintWriter(clientSocket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
