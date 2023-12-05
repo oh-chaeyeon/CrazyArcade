@@ -1,11 +1,9 @@
 package crazyarcade;
-
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 
 public class Waitroom extends JFrame {
     private JTextArea textArea;
@@ -57,8 +55,8 @@ public class Waitroom extends JFrame {
 
         setVisible(true);
     }
-
-    public void displayImage(String imagePath) {
+    
+    public void client1Image(String imagePath) {
         try {
             Image image = ImageIO.read(getClass().getResource(imagePath));
             ImageIcon imageIcon = new ImageIcon(image);
@@ -75,13 +73,13 @@ public class Waitroom extends JFrame {
         }
     }
 
-    public void displayClientImage(String imagePath) {
+    public void client2Image(String imagePath) {
         try {
             Image image = ImageIO.read(getClass().getResource(imagePath));
             ImageIcon imageIcon = new ImageIcon(image);
 
             JLabel imageLabel = new JLabel(imageIcon);
-            imageLabel.setBounds(355, 170, imageIcon.getIconWidth(), imageIcon.getIconHeight()); // 클라이언트 이미지 위치
+            imageLabel.setBounds(355, 170, imageIcon.getIconWidth(), imageIcon.getIconHeight());
             getLayeredPane().add(imageLabel, Integer.valueOf(1));
 
             revalidate();
@@ -90,7 +88,7 @@ public class Waitroom extends JFrame {
             e.printStackTrace();
         }
     }
-    
+
     public JTextArea getTextArea() {
         return textArea;
     }
