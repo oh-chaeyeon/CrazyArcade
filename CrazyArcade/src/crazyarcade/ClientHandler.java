@@ -29,16 +29,22 @@ public class ClientHandler implements Runnable {
             sendMessage("현재 참여자는 User" + userNumber + " 입니다.\n");
 
             while ((message = in.readLine()) != null) {
-                server.broadcastMessage("상대방: " + message, this);
+            	if (message.equals("게임 시작")) {
+                    server.broadcastMessage("게임 시작", null);
+                } else {
+                    server.broadcastMessage("상대방: " + message, this);
+                }
             }
         } catch (IOException e) {
-            System.out.println("User " + userNumber + "접속 중 오류 발생: " + e.getMessage());
+
         } finally {
             try {
                 clientSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            
+            server.broadcastMessage("User" + userNumber + "님이 퇴장하셨습니다.", this);
             server.removeClient(this);
         }
     }
