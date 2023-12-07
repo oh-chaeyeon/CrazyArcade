@@ -1,83 +1,83 @@
 package crazyarcade;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Server {
-    private JFrame loginFrame;
-    private Waitroom waitroom;
-    private PrintWriter out;
-    private BufferedReader in;
+    private static Server instance;
+    private Set<ClientHandler> clients = Collections.synchronizedSet(new HashSet<>());
+    private int userCounter = 0;
+    private ServerSocket serverSocket;
 
-    public Server() {
-        loginFrame = new Login("Login", this::createChatScreen);
-    }
-
-    private void createChatScreen() {
-        Point location = loginFrame.getLocation();
-        loginFrame.setVisible(false);
-
-        waitroom = new Waitroom("대기실 (User1)");
-        waitroom.setLocation(location);
-        waitroom.displayImage("/image/bazzi_front.png");
-
-        waitroom.getSendButton().addActionListener(e -> sendMessage());
+    private Server() {
         startServer();
     }
 
-    private void startServer() {
-        new Thread(() -> {
-            try {
-                ServerSocket serverSocket = new ServerSocket(9999);
-                SwingUtilities.invokeLater(() ->
-                    waitroom.appendText("게임에 접속하였습니다. 다른 유저를 기다립니다..\n"));
-
-                Socket clientSocket = serverSocket.accept();
-                SwingUtilities.invokeLater(() ->
-                    waitroom.appendText("User2가 입장하셨습니다.\n\n"));
-                	waitroom.displayClientImage("/image/woonie_front.png");
-
-                out = new PrintWriter(clientSocket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-
-                SwingWorker<Void, String> worker = new SwingWorker<>() {
-                    @Override
-                    protected Void doInBackground() throws Exception {
-                        String message;
-                        while ((message = in.readLine()) != null) {
-                            publish(message);
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    protected void process(List<String> chunks) {
-                        for (String message : chunks) {
-                            waitroom.appendText("상대방: " + message + "\n");
-                        }
-                    }
-                };
-                worker.execute();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
+    public static Server getInstance() {
+        if (instance == null) {
+            instance = new Server();
+        }
+        return instance;
     }
 
-    private void sendMessage() {
-        String message = waitroom.getInputBox().getText();
-        if (!message.isEmpty()) {
-            waitroom.appendText("나: " + message + "\n");
-            out.println(message);
-            waitroom.getInputBox().setText("");
+    private void startServer() {
+        try {
+            serverSocket = new ServerSocket(54321);
+            System.out.println("서버가 시작되었습니다.");
+
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("새로운 User가 입장하셨습니다.");
+
+                userCounter++;
+                ClientHandler clientHandler = new ClientHandler(clientSocket, userCounter, this);
+                clients.add(clientHandler);
+
+                if (clients.size() == 1) {
+                    clientHandler.sendMessage("다른 유저를 기다립니다..");
+                } else if (clients.size() == 2) {
+                    broadcastMessage("모든 유저가 접속하였습니다.", null);
+                    broadcastMessage("", null);
+                }
+
+                new Thread(clientHandler).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            closeServerSocket();
+        }
+    }
+
+    public void removeClient(ClientHandler clientHandler) {
+        clients.remove(clientHandler);
+        System.out.println("User" + clientHandler.getUserNumber() + " 연결이 종료되었습니다.");
+    }
+
+    private void closeServerSocket() {
+        try {
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                serverSocket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void broadcastMessage(String message, ClientHandler excludeClient) {
+        synchronized (clients) {
+            for (ClientHandler client : clients) {
+                if (client != excludeClient) {
+                    client.sendMessage(message);
+                }
+            }
         }
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(Server::new);
+        Server server = Server.getInstance();
     }
 }
