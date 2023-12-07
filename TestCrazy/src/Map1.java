@@ -1,13 +1,7 @@
-package crazyarcade;
-
 import javax.swing.*;
 import java.awt.*;
 
-
 public class Map1 extends JFrame {
-   
-   public static final int SCREEN_WIDTH = 614;
-   public static final int SCREEN_HEIGHT = 550;
 
     private Image background;
     private Image brick;
@@ -17,10 +11,11 @@ public class Map1 extends JFrame {
     public static Person person1; 
     public static Person person2;
     
-    public Map1(Point location) {
+    public Map1() {
         setTitle("Map1");
-        setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+        setSize(Main.SCREEN_WIDTH, Main.SCREEN_HEIGHT);
         setResizable(false);
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // JPanel을 추가하여 이미지를 그릴 수 있도록 함
@@ -33,15 +28,12 @@ public class Map1 extends JFrame {
         };
         add(panel);
 
-        background = new ImageIcon(getClass().getResource("/image/mapbg2.png")).getImage();
-        brick = new ImageIcon(getClass().getResource("/image/box3.png")).getImage();
-        brickA = new ImageIcon(getClass().getResource("/image/box2.png")).getImage();
-       
-        // 창을 waitroom의 위치에 설정
-        setLocation(location);
+        background = new ImageIcon(Main.class.getResource("/image/mapbg2.png")).getImage();
+        brick = new ImageIcon(Main.class.getResource("/image/box3.png")).getImage();
+        brickA = new ImageIcon(Main.class.getResource("/image/box2.png")).getImage();
         setVisible(true);
         
-        addKeyListener(new KeyListener(1)); // Map1에서
+        addKeyListener(new KeyListener());
         
         // 캐릭터 생성자 호출 및 초기화
         person1 = new Person();
